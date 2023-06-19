@@ -37,6 +37,18 @@ namespace Suburb.Screens
             return currentScreen as TScreen;
         }
 
+        public BaseScreen GoToPrevious()
+        {
+            if (previousScreen == null)
+                return null;
+
+            currentScreen?.InitHide();
+            previousScreen.InitShow();
+            currentScreen = previousScreen;
+            previousScreen = null;
+            return currentScreen;
+        }
+
         private TScreen GetOrCreateScreen<TScreen>()
             where TScreen : BaseScreen
         {
