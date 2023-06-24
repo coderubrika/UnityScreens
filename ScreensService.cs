@@ -11,9 +11,7 @@ namespace Suburb.Screens
         private readonly IFactory<string, BaseScreen> screensFactory;
         private readonly Transform screensRoot;
         private readonly Dictionary<Type, BaseScreen> screensCache = new();
-
-        private BaseScreen previousScreen;
-        private BaseScreen currentScreen;
+        private readonly Stack<BaseScreen> screensStack = new();
 
         public ScreensService(IFactory<string, BaseScreen> screensFactory, string resourcesRoot)
         {
@@ -28,10 +26,11 @@ namespace Suburb.Screens
         public TScreen GoTo<TScreen>()
             where TScreen : BaseScreen
         {
-            previousScreen = currentScreen;
-            previousScreen?.InitHide();
+            if (screensStack.Count > 0)
+                screensStack.Peek().InitHide();
 
-            currentScreen = GetOrCreateScreen<TScreen>();
+            BaseScreen currentScreen = GetOrCreateScreen<TScreen>();
+            screensStack.Push(currentScreen);
             currentScreen.InitShow();
 
             return currentScreen as TScreen;
@@ -39,13 +38,15 @@ namespace Suburb.Screens
 
         public BaseScreen GoToPrevious()
         {
-            if (previousScreen == null)
+            if (screensStack.Count < 2)
                 return null;
 
-            currentScreen?.InitHide();
-            previousScreen.InitShow();
-            currentScreen = previousScreen;
-            previousScreen = null;
+            BaseScreen previousScreen = screensStack.Pop();
+            BaseScreen currentScreen = screensStack.Peek();
+
+            previousScreen.InitHide();
+            currentScreen.InitShow();
+
             return currentScreen;
         }
 
