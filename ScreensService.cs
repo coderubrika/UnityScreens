@@ -7,20 +7,14 @@ namespace Suburb.Screens
 {
     public class ScreensService
     {
-        private readonly string resourcesRoot;
-        private readonly IFactory<string, BaseScreen> screensFactory;
+        private readonly ScreensFactory screensFactory;
         private readonly Transform screensRoot;
         private readonly Dictionary<Type, BaseScreen> screensCache = new();
         private readonly Stack<BaseScreen> screensStack = new();
 
-        public ScreensService(IFactory<string, BaseScreen> screensFactory, string resourcesRoot)
+        public ScreensService(ScreensFactory screensFactory)
         {
-            this.resourcesRoot = resourcesRoot;
             this.screensFactory = screensFactory;
-
-            GameObject screenRootObject = new GameObject("UI Root");
-            screensRoot = screenRootObject.transform;
-            GameObject.DontDestroyOnLoad(screenRootObject);
         }
 
         public TScreen GoTo<TScreen>()
@@ -60,7 +54,7 @@ namespace Suburb.Screens
                 return baseScreen as TScreen;
             }
 
-            BaseScreen screen = screensFactory.Create($"{resourcesRoot}/{typeof(TScreen).Name}") as TScreen;
+            BaseScreen screen = screensFactory.Create(screenType) as TScreen;
             screensCache[screenType] = screen;
             screen.transform.SetParent(screensRoot);
 
