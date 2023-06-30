@@ -44,6 +44,34 @@ namespace Suburb.Screens
             return currentScreen;
         }
 
+        public BaseScreen GoToPrevious<T>()
+            where T : BaseScreen
+        {
+            if (screensStack.Count < 2)
+                return null;
+
+            BaseScreen previousScreen = screensStack.Pop();
+            T currentScreen = null;
+
+            while (screensStack.Count > 0)
+            {
+                currentScreen = screensStack.Pop() as T;
+                if (currentScreen != null)
+                {
+                    screensStack.Push(currentScreen);
+                    break;
+                }
+            }
+
+            if (currentScreen == null)
+                currentScreen = GetOrCreateScreen<T>();
+
+            previousScreen.InitHide();
+            currentScreen.InitShow();
+
+            return currentScreen;
+        }
+
         private TScreen GetOrCreateScreen<TScreen>()
             where TScreen : BaseScreen
         {
