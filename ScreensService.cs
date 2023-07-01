@@ -8,7 +8,6 @@ namespace Suburb.Screens
     public class ScreensService
     {
         private readonly ScreensFactory screensFactory;
-        private readonly Transform screensRoot;
         private readonly Dictionary<Type, BaseScreen> screensCache = new();
         private readonly Stack<BaseScreen> screensStack = new();
 
@@ -84,7 +83,6 @@ namespace Suburb.Screens
 
             BaseScreen screen = screensFactory.Create(screenType) as TScreen;
             screensCache[screenType] = screen;
-            screen.transform.SetParent(screensRoot);
 
             return screen as TScreen;
         }

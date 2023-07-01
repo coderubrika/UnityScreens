@@ -5,23 +5,23 @@ namespace Suburb.Screens
 {
     public abstract class BaseScreen : MonoBehaviour
     {
-        protected bool isShow;
+        public bool IsShow { get; private set; }
 
         public void InitShow()
         {
-            if (isShow)
+            if (IsShow)
                 return;
 
-            isShow = true;
+            IsShow = true;
             Show();
         }
 
         public void InitHide()
         {
-            if (!isShow)
+            if (!IsShow)
                 return;
 
-            isShow = false;
+            IsShow = false;
             Hide();
         }
 

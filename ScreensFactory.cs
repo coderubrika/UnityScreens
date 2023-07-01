@@ -7,14 +7,14 @@ namespace Suburb.Screens
     public class ScreensFactory : IFactory<Type, BaseScreen>
     {
         private readonly DiContainer container;
-        private readonly string uiRootPath;
-        
+        private readonly string screensRootPath;
+
         private readonly Transform uiRoot;
 
-        public ScreensFactory(DiContainer container, string uiRootPath)
+        public ScreensFactory(DiContainer container, string screensRootPath)
         {
             this.container = container;
-            this.uiRootPath = uiRootPath;
+            this.screensRootPath = screensRootPath;
 
             var uiRootGameObject = new GameObject("UIRoot");
             GameObject.DontDestroyOnLoad(uiRootGameObject);
@@ -23,7 +23,7 @@ namespace Suburb.Screens
 
         public BaseScreen Create(Type screenType)
         {
-            string resourcePath = $"{uiRootPath}/{screenType.Name}";
+            string resourcePath = $"{screensRootPath}/{screenType.Name}";
             var prefab = Resources.Load(resourcePath);
 
             return (BaseScreen)container.InstantiatePrefabForComponent(
