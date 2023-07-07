@@ -20,7 +20,13 @@ namespace Suburb.Screens
             where TScreen : BaseScreen
         {
             if (screensStack.Count > 0)
-                screensStack.Peek().InitHide();
+            {
+                BaseScreen screen = screensStack.Peek();
+                screen.InitHide();
+
+                if (typeof(TScreen) == screen.GetType())
+                    return screen as TScreen;
+            }
 
             BaseScreen currentScreen = GetOrCreateScreen<TScreen>();
             screensStack.Push(currentScreen);
