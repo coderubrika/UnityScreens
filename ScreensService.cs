@@ -22,10 +22,11 @@ namespace Suburb.Screens
             if (screensStack.Count > 0)
             {
                 BaseScreen screen = screensStack.Peek();
-                screen.InitHide();
 
                 if (typeof(TScreen) == screen.GetType())
                     return screen as TScreen;
+
+                screen.InitHide();
             }
 
             BaseScreen currentScreen = GetOrCreateScreen<TScreen>();
