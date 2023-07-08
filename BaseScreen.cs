@@ -25,6 +25,8 @@ namespace Suburb.Screens
             Hide();
         }
 
+        public virtual void GoBack() { }
+
         protected virtual void Show()
         {
             gameObject.SetActive(true);

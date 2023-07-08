@@ -43,6 +43,7 @@ namespace Suburb.Screens
             BaseScreen previousScreen = screensStack.Pop();
             BaseScreen currentScreen = screensStack.Peek();
 
+            previousScreen.GoBack();
             previousScreen.InitHide();
             currentScreen.InitShow();
 
@@ -52,26 +53,37 @@ namespace Suburb.Screens
         public BaseScreen GoToPrevious<T>()
             where T : BaseScreen
         {
+            if (screensStack.Peek().GetType() == typeof(T))
+                return screensStack.Peek() as T;
+
             if (screensStack.Count < 2)
                 return null;
 
             BaseScreen previousScreen = screensStack.Pop();
+            previousScreen.GoBack();
+            previousScreen.InitHide();
+
             T currentScreen = null;
 
             while (screensStack.Count > 0)
             {
-                currentScreen = screensStack.Pop() as T;
+                BaseScreen transitionalScreen = screensStack.Pop();
+                currentScreen = transitionalScreen as T;
                 if (currentScreen != null)
                 {
                     screensStack.Push(currentScreen);
                     break;
+                }
+                else
+                {
+                    transitionalScreen.GoBack();
+                    transitionalScreen.InitHide();
                 }
             }
 
             if (currentScreen == null)
                 currentScreen = GetOrCreateScreen<T>();
 
-            previousScreen.InitHide();
             currentScreen.InitShow();
 
             return currentScreen;
