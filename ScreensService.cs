@@ -11,7 +11,9 @@ namespace Suburb.Screens
         private readonly ScreensFactory screensFactory;
         private readonly Dictionary<Type, BaseScreen> screensCache = new();
         private readonly Router router = new();
-
+        
+        public static string UI_CAMERA { get; } = "uiCamera";
+        
         public ScreensService(ScreensFactory screensFactory)
         {
             this.screensFactory = screensFactory;
