@@ -9,11 +9,12 @@ namespace Suburb.Screens
         [SerializeField] protected float showTransitionTimeMS;
         [SerializeField] protected float hideTransitionTimeMS;
 
+        private IDisposable updateDisposable;
         protected override void Show()
         {
             base.Show();
 
-            Observable.EveryUpdate()
+            updateDisposable = Observable.EveryUpdate()
                 .Subscribe(_ =>
                 {
                     
@@ -22,6 +23,7 @@ namespace Suburb.Screens
 
         protected override void Hide()
         {
+            updateDisposable?.Dispose();
             base.Hide();
         }
     }
