@@ -11,7 +11,8 @@ namespace Suburb.Screens
         private readonly ScreensFactory screensFactory;
         private readonly Dictionary<Type, BaseScreen> screensCache = new();
         private readonly Router router = new();
-        
+
+        private const string BASE_SCREEN = "BaseScreen";
         public static string UI_CAMERA { get; } = "uiCamera";
         
         public ScreensService(ScreensFactory screensFactory)
@@ -62,6 +63,18 @@ namespace Suburb.Screens
             return router.GetLast() as BaseScreen;
         }
 
+        public IDisposable UseTransition<TFrom, TTo>(Action<TFrom, TTo> onTransition)
+            where TFrom : BaseScreen
+            where TTo : BaseScreen
+        {
+            string from = typeof(TFrom).Name;
+            string to = typeof(TTo).Name;
+            return router.Use(
+                (pFrom, pTo) => onTransition.Invoke(pFrom as TFrom, pTo as TTo), 
+                from == BASE_SCREEN ? string.Empty : from, 
+                to == BASE_SCREEN ? string.Empty : to);
+        }
+        
         private TScreen GetOrCreateScreen<TScreen>()
             where TScreen : BaseScreen
         {
