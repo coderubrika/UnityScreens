@@ -19,7 +19,7 @@ namespace Suburb.Screens
         {
             this.screensFactory = screensFactory;
 
-            router.Use((from, to) =>
+            router.Use((from, to, next) =>
             {
                 BaseScreen fromScreen = from as BaseScreen;
                 BaseScreen toScreen = to as BaseScreen;
@@ -31,6 +31,7 @@ namespace Suburb.Screens
                 }
 
                 toScreen.InitShow();
+                next.Invoke();
             });
         }
 
@@ -39,7 +40,7 @@ namespace Suburb.Screens
         {
             Type screenType = typeof(TScreen);
             BaseScreen currentScreen = GetOrCreateScreen<TScreen>();
-            return router.GoTo(screenType.Name) ? currentScreen as TScreen : null;
+            return router.GoTo(screenType.Name) ? (TScreen)currentScreen : null;
         }
 
         public BaseScreen GoToPrevious()
@@ -63,37 +64,17 @@ namespace Suburb.Screens
             return router.GetLast() as BaseScreen;
         }
 
-        public IDisposable UseTransition<TFrom, TTo>(Action<TFrom, TTo> onTransition)
+        public IDisposable UseTransition<TFrom, TTo>(Action<TFrom, TTo, Action> onTransition, MiddlewareOrder order)
             where TFrom : BaseScreen
             where TTo : BaseScreen
         {
             string from = typeof(TFrom).Name;
             string to = typeof(TTo).Name;
             return router.Use(
-                (pFrom, pTo) => onTransition.Invoke(pFrom as TFrom, pTo as TTo), 
+                (pFrom, pTo, next) => onTransition.Invoke(pFrom as TFrom, pTo as TTo, next), 
                 from == BASE_SCREEN ? string.Empty : from, 
-                to == BASE_SCREEN ? string.Empty : to);
+                to == BASE_SCREEN ? string.Empty : to, order);
         }
-        
-        /*
-         *в общем в чем соль в том что мне нужно сначала испольнить взаимодествие
-         * точки от до для "от" и только потом от до для "до"
-         * причем это может и не касаться других обработок
-         * таким образом мне нужно поддерживать цепочки переходов
-         * если не оверинженерить то тут идеально подойдет цепочка обвервабле
-         * как это обыграть
-         *
-         * роутер не должен принимать экшон а даже если должен
-         *
-         *
-         * по факту мне надо добавить анимацию из from добавить анимацию из to
-         * мне переход нужно сделать по середине
-         *
-         * я могу прописать переходы от до сколько угодно штук
-         * но мне блин нужно как то их пометить мать твою
-         * поэтому я могу ввести 3 типа перехода
-         * от до (от); от до (середина); от до (до)
-         */
         
         private TScreen GetOrCreateScreen<TScreen>()
             where TScreen : BaseScreen
