@@ -19,10 +19,10 @@ namespace Suburb.Screens
         {
             this.screensFactory = screensFactory;
 
-            router.Use((from, to, next) =>
+            router.Use((points, next) =>
             {
-                BaseScreen fromScreen = from as BaseScreen;
-                BaseScreen toScreen = to as BaseScreen;
+                BaseScreen fromScreen = points.From as BaseScreen;
+                BaseScreen toScreen = points.To as BaseScreen;
 
                 if (fromScreen != null)
                 {
@@ -31,7 +31,7 @@ namespace Suburb.Screens
                 }
 
                 toScreen.InitShow();
-                next.Invoke();
+                next.Invoke(points);
             });
         }
 
@@ -64,14 +64,17 @@ namespace Suburb.Screens
             return router.GetLast() as BaseScreen;
         }
 
-        public IDisposable UseTransition<TFrom, TTo>(Action<TFrom, TTo, Action> onTransition, MiddlewareOrder order)
+        public IDisposable UseTransition<TFrom, TTo>(Action<TFrom, TTo, Action<(IEndpoint From, IEndpoint To)>> onTransition, MiddlewareOrder order)
             where TFrom : BaseScreen
             where TTo : BaseScreen
         {
             string from = typeof(TFrom).Name;
             string to = typeof(TTo).Name;
             return router.Use(
-                (pFrom, pTo, next) => onTransition.Invoke(pFrom as TFrom, pTo as TTo, next), 
+                (points, next) => onTransition.Invoke(
+                    points.From as TFrom, 
+                    points.To as TTo, 
+                    next), 
                 from == BASE_SCREEN ? string.Empty : from, 
                 to == BASE_SCREEN ? string.Empty : to, order);
         }
