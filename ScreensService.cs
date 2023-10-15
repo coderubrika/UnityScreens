@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
-using Zenject;
 using Suburb.ExpressRouter;
 
 namespace Suburb.Screens
@@ -77,6 +75,7 @@ namespace Suburb.Screens
             if (!screensCache.TryGetValue(screenType, out BaseScreen screen))
             {
                 screen = screensFactory.Create(screenType) as TScreen;
+                screen.gameObject.SetActive(false);
                 router.AddEndpoint(screen);
             }
 
