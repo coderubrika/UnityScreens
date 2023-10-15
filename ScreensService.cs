@@ -32,7 +32,7 @@ namespace Suburb.Screens
 
                 toScreen.InitShow();
                 next.Invoke(points);
-            }));
+            }), Router.ALL, Router.ALL);
         }
 
         public TScreen GoTo<TScreen>()
@@ -64,15 +64,8 @@ namespace Suburb.Screens
             return router.GetLast() as BaseScreen;
         }
 
-        public IDisposable UseTransition<TFrom, TTo>(ActItem<FromTo> transition, MiddlewareOrder order)
-            where TFrom : BaseScreen
-            where TTo : BaseScreen
+        public IDisposable UseTransition(ActItem<FromTo> transition, string from, string to, MiddlewareOrder order)
         {
-            string from = typeof(TFrom).Name;
-            string to = typeof(TTo).Name;
-            from = from == BASE_SCREEN ? null : from;
-            to = to == BASE_SCREEN ? null : to;
-            
             return router.Use(transition, from, to, order);
         }
         
