@@ -9,14 +9,11 @@ namespace Suburb.Screens
         private readonly ScreensFactory screensFactory;
         private readonly Dictionary<Type, BaseScreen> screensCache = new();
         private readonly Router router = new();
-
-        private const string BASE_SCREEN = "BaseScreen";
-        public static string UI_CAMERA { get; } = "uiCamera";
         
         public ScreensService(ScreensFactory screensFactory)
         {
             this.screensFactory = screensFactory;
-
+            
             router.Use(new ActItem<FromTo>((points, next) =>
             {
                 BaseScreen fromScreen = points.From as BaseScreen;
@@ -30,7 +27,7 @@ namespace Suburb.Screens
 
                 toScreen.InitShow();
                 next.Invoke(points);
-            }), Router.ALL, Router.ALL);
+            }), Rule.AllToAll());
         }
 
         public TScreen GoTo<TScreen>()
@@ -62,9 +59,9 @@ namespace Suburb.Screens
             return router.GetLast() as BaseScreen;
         }
 
-        public IDisposable UseTransition(ActItem<FromTo> transition, string from, string to, MiddlewareOrder order)
+        public IDisposable UseTransition(ActItem<FromTo> transition, Rule rule, MiddlewareOrder order)
         {
-            return router.Use(transition, from, to, order);
+            return router.Use(transition, rule, order);
         }
         
         private TScreen GetOrCreateScreen<TScreen>()

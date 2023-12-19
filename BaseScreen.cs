@@ -15,7 +15,7 @@ namespace Suburb.Screens
         public void Construct(CameraService cameraService)
         {
             this.cameraService = cameraService;
-            canvas.worldCamera = cameraService.GetCamera(ScreensService.UI_CAMERA);
+            canvas.worldCamera = cameraService.GetCamera("UICamera");
         }
         
         public bool IsShow { get; private set; }
